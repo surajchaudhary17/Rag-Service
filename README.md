@@ -1,5 +1,6 @@
 # Rag-Service
 SharePoint-based RAG + LLM platform
+
 Phase 1 - Foundation
 Building of automated SharePoint ingestion pipeline in Java/Spring Boot using Microsoft Graph API, Apache Tika for multi-format parsing, and Qdrant vector DB - processing 5,000+ document chunks with idempotent incremental sync.
 
