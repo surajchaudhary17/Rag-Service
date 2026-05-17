@@ -1,7 +1,7 @@
 package com.suraj.rag.qdrant;
 
 import com.google.protobuf.Struct;
-import com.google.protobuf.Value;
+import io.qdrant.client.grpc.JsonWithInt;
 import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.grpc.Collections;
@@ -67,9 +67,11 @@ public class QdrantService {
                                             )
                                             .build()
                             )
-                            .putAllPayload(
-                                    Map.of(
-                                    )
+                            .putPayload(
+                                    "text",
+                                    JsonWithInt.Value.newBuilder()
+                                            .setStringValue(text)
+                                            .build()
                             )
                             .build();
 
@@ -77,6 +79,48 @@ public class QdrantService {
                     COLLECTION_NAME,
                     List.of(point)
             ).get();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> search(
+            List<Float> queryEmbedding
+    ) {
+
+        try {
+
+            List<Points.ScoredPoint> results =
+                    qdrantClient.searchAsync(
+                            Points.SearchPoints.newBuilder()
+                                    .setCollectionName(COLLECTION_NAME)
+                                    .addAllVector(queryEmbedding)
+                                    .setLimit(3)
+                                    .setWithPayload(
+                                            Points.WithPayloadSelector.newBuilder()
+                                                    .setEnable(true)
+                                                    .build()
+                                    )
+                                    .build()
+                    ).get();
+
+            return results.stream()
+                    .map(point -> {
+
+                        Map<String, JsonWithInt.Value> payloadMap =
+                                point.getPayloadMap();
+
+                        JsonWithInt.Value textValue =
+                                payloadMap.get("text");
+
+                        if (textValue == null) {
+                            return "No payload found";
+                        }
+
+                        return textValue.getStringValue();
+                    })
+                    .toList();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
