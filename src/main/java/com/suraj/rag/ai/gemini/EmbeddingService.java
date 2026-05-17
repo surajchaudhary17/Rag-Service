@@ -34,6 +34,7 @@ public class EmbeddingService {
             throw new RuntimeException("Embedding list is empty");
         }
 
+
         ContentEmbedding embedding = embeddings.get(0);
 
         return embedding.values()

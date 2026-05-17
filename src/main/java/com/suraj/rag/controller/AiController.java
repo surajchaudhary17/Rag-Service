@@ -58,4 +58,15 @@ public class AiController {
 
         return "Stored successfully";
     }
+
+    @GetMapping("/search")
+    public List<String> search(
+            @RequestParam String query
+    ) {
+
+        List<Float> embedding =
+                embeddingService.createEmbedding(query);
+
+        return qdrantService.search(embedding);
+    }
 }
