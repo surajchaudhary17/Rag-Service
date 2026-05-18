@@ -69,4 +69,21 @@ public class AiController {
 
         return qdrantService.search(embedding);
     }
+
+    @GetMapping("/rag")
+    public String rag(
+            @RequestParam String question
+    ) {
+
+        List<Float> embedding =
+                embeddingService.createEmbedding(question);
+
+        List<String> contexts =
+                qdrantService.search(embedding);
+
+        return geminiService.askWithContext(
+                question,
+                contexts
+        );
+    }
 }
