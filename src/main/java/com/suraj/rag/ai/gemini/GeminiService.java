@@ -28,7 +28,7 @@ public class GeminiService {
         return response.text();
     }
 
-    public String askWithContext(
+    public String askWithContextOld(
             String question,
             List<String> contexts
     ) {
@@ -46,6 +46,63 @@ public class GeminiService {
 
             Question:
             %s
+            """.formatted(
+                contextText,
+                question
+        );
+
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-2.5-flash",
+                        finalPrompt,
+                        null
+                );
+
+        return response.text();
+    }
+
+    public String askWithContext(
+            String question,
+            List<String> contexts
+    ) {
+
+        String contextText =
+                String.join("\n\n", contexts);
+        /*
+        this is called prompt grounding, Without this:
+
+        - models hallucinate
+        - ignore retrieval
+        - answer from training data
+
+        This instruction forces:
+        👉 retrieval-based answering.
+         */
+
+        String finalPrompt = """
+            You are an AI assistant.
+
+            Answer ONLY from the provided context.
+
+            If the answer is not present in the context,
+            say:
+            "I could not find relevant information."
+
+            =====================
+            CONTEXT
+            =====================
+
+            %s
+
+            =====================
+            QUESTION
+            =====================
+
+            %s
+
+            =====================
+            ANSWER
+            =====================
             """.formatted(
                 contextText,
                 question

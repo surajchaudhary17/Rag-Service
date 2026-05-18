@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -115,11 +116,13 @@ public class QdrantService {
                                 payloadMap.get("text");
 
                         if (textValue == null) {
-                            return "No payload found";
+                            return null;
                         }
 
                         return textValue.getStringValue();
                     })
+                    .filter(Objects::nonNull)
+                    .distinct()
                     .toList();
 
         } catch (Exception e) {
