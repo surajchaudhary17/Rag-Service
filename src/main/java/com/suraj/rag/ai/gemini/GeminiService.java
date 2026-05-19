@@ -3,6 +3,7 @@ package com.suraj.rag.ai.gemini;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import com.suraj.rag.model.SearchResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,46 +64,44 @@ public class GeminiService {
 
     public String askWithContext(
             String question,
-            List<String> contexts
+            List<SearchResult> contexts
     ) {
 
         String contextText =
-                String.join("\n\n", contexts);
-        /*
-        this is called prompt grounding, Without this:
+                contexts.stream()
+                        .map(result -> """
 
-        - models hallucinate
-        - ignore retrieval
-        - answer from training data
+                            SOURCE: %s
+                            CHUNK: %d
 
-        This instruction forces:
-        👉 retrieval-based answering.
-         */
+                            %s
+                            """.formatted(
+                                result.getSource(),
+                                result.getChunk(),
+                                result.getText()
+                        ))
+                        .reduce("", String::concat);
 
         String finalPrompt = """
             You are an AI assistant.
 
             Answer ONLY from the provided context.
 
-            If the answer is not present in the context,
+            If answer is not available,
             say:
             "I could not find relevant information."
 
-            =====================
+            ====================
             CONTEXT
-            =====================
+            ====================
 
             %s
 
-            =====================
+            ====================
             QUESTION
-            =====================
+            ====================
 
             %s
-
-            =====================
-            ANSWER
-            =====================
             """.formatted(
                 contextText,
                 question
