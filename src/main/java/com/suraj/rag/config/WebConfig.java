@@ -14,8 +14,22 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(
+            InterceptorRegistry registry
+    ) {
+
         registry.addInterceptor(interceptor)
-                .addPathPatterns("/api/**"); // apply only to APIs
+                .addPathPatterns("/api/**");
+    }
+
+    @Override
+    public void addCorsMappings(
+            CorsRegistry registry
+    ) {
+
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("*")
+                .allowedHeaders("*");
     }
 }
