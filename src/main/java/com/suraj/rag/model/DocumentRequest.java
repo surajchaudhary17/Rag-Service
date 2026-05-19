@@ -4,6 +4,7 @@ public class DocumentRequest {
 
     private String id;
     private String text;
+    private String source;
 
     public String getId() {
         return id;
@@ -19,5 +20,13 @@ public class DocumentRequest {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

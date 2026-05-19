@@ -8,6 +8,7 @@ import io.qdrant.client.grpc.Collections;
 import io.qdrant.client.grpc.Points;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import com.suraj.rag.model.SearchResult;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,9 @@ public class QdrantService {
 
     public void storeVector(
             String text,
-            List<Float> embedding
+            List<Float> embedding,
+            String source,
+            int chunkIndex
     ) {
 
         try {
@@ -68,12 +71,31 @@ public class QdrantService {
                                             )
                                             .build()
                             )
+
+                            // TEXT
                             .putPayload(
                                     "text",
                                     JsonWithInt.Value.newBuilder()
                                             .setStringValue(text)
                                             .build()
                             )
+
+                            // SOURCE FILE
+                            .putPayload(
+                                    "source",
+                                    JsonWithInt.Value.newBuilder()
+                                            .setStringValue(source)
+                                            .build()
+                            )
+
+                            // CHUNK INDEX
+                            .putPayload(
+                                    "chunk",
+                                    JsonWithInt.Value.newBuilder()
+                                            .setIntegerValue(chunkIndex)
+                                            .build()
+                            )
+
                             .build();
 
             qdrantClient.upsertAsync(
@@ -82,11 +104,12 @@ public class QdrantService {
             ).get();
 
         } catch (Exception e) {
+
             throw new RuntimeException(e);
         }
     }
 
-    public List<String> search(
+    public List<SearchResult> search(
             List<Float> queryEmbedding
     ) {
 
@@ -97,35 +120,45 @@ public class QdrantService {
                             Points.SearchPoints.newBuilder()
                                     .setCollectionName(COLLECTION_NAME)
                                     .addAllVector(queryEmbedding)
-                                    .setLimit(3)
+                                    .setLimit(5)
+
                                     .setWithPayload(
                                             Points.WithPayloadSelector.newBuilder()
                                                     .setEnable(true)
                                                     .build()
                                     )
+
                                     .build()
                     ).get();
 
             return results.stream()
                     .map(point -> {
 
-                        Map<String, JsonWithInt.Value> payloadMap =
+                        Map<String, JsonWithInt.Value> payload =
                                 point.getPayloadMap();
 
-                        JsonWithInt.Value textValue =
-                                payloadMap.get("text");
+                        String text =
+                                payload.get("text")
+                                        .getStringValue();
 
-                        if (textValue == null) {
-                            return null;
-                        }
+                        String source =
+                                payload.get("source")
+                                        .getStringValue();
 
-                        return textValue.getStringValue();
+                        int chunk =
+                                (int) payload.get("chunk")
+                                        .getIntegerValue();
+
+                        return new SearchResult(
+                                text,
+                                source,
+                                chunk
+                        );
                     })
-                    .filter(Objects::nonNull)
-                    .distinct()
                     .toList();
 
         } catch (Exception e) {
+
             throw new RuntimeException(e);
         }
     }

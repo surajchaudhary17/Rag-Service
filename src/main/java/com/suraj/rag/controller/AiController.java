@@ -3,8 +3,12 @@ package com.suraj.rag.controller;
 import com.suraj.rag.ai.gemini.EmbeddingService;
 import com.suraj.rag.ai.gemini.GeminiService;
 import com.suraj.rag.model.DocumentRequest;
+import com.suraj.rag.model.SearchResult;
 import com.suraj.rag.qdrant.QdrantService;
+import com.suraj.rag.service.PdfService;
+import com.suraj.rag.service.TextChunkingService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,15 +19,21 @@ public class AiController {
     private final GeminiService geminiService;
     private final EmbeddingService embeddingService;
     private final QdrantService qdrantService;
+    private final PdfService pdfService;
+    private final TextChunkingService chunkingService;
 
     public AiController(
             GeminiService geminiService,
             EmbeddingService embeddingService,
-            QdrantService qdrantService
+            QdrantService qdrantService,
+            PdfService pdfService,
+            TextChunkingService chunkingService
     ) {
         this.geminiService = geminiService;
         this.embeddingService = embeddingService;
         this.qdrantService = qdrantService;
+        this.pdfService = pdfService;
+        this.chunkingService = chunkingService;
     }
 
     @GetMapping("/generate")
@@ -53,14 +63,16 @@ public class AiController {
 
         qdrantService.storeVector(
                 request.getText(),
-                embedding
+                embedding,
+                request.getSource(),
+                0
         );
 
         return "Stored successfully";
     }
 
     @GetMapping("/search")
-    public List<String> search(
+    public List<SearchResult> search(
             @RequestParam String query
     ) {
 
@@ -78,7 +90,7 @@ public class AiController {
         List<Float> embedding =
                 embeddingService.createEmbedding(question);
 
-        List<String> contexts =
+        List<SearchResult> contexts =
                 qdrantService.search(embedding);
 
         return geminiService.askWithContext(
@@ -86,4 +98,6 @@ public class AiController {
                 contexts
         );
     }
+
+
 }
