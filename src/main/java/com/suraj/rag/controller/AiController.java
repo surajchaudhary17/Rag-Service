@@ -2,15 +2,18 @@ package com.suraj.rag.controller;
 
 import com.suraj.rag.ai.gemini.EmbeddingService;
 import com.suraj.rag.ai.gemini.GeminiService;
+import com.suraj.rag.model.ChatMessage;
 import com.suraj.rag.model.DocumentRequest;
 import com.suraj.rag.model.SearchResult;
 import com.suraj.rag.qdrant.QdrantService;
+import com.suraj.rag.service.ChatMemoryService;
 import com.suraj.rag.service.PdfService;
 import com.suraj.rag.service.TextChunkingService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+
 
 import java.util.List;
 
@@ -23,19 +26,22 @@ public class AiController {
     private final QdrantService qdrantService;
     private final PdfService pdfService;
     private final TextChunkingService chunkingService;
+    private final ChatMemoryService chatMemoryService;
 
     public AiController(
             GeminiService geminiService,
             EmbeddingService embeddingService,
             QdrantService qdrantService,
             PdfService pdfService,
-            TextChunkingService chunkingService
+            TextChunkingService chunkingService,
+            ChatMemoryService chatMemoryService
     ) {
         this.geminiService = geminiService;
         this.embeddingService = embeddingService;
         this.qdrantService = qdrantService;
         this.pdfService = pdfService;
         this.chunkingService = chunkingService;
+        this.chatMemoryService = chatMemoryService;
     }
 
     @GetMapping("/generate")
@@ -116,6 +122,47 @@ public class AiController {
                 question,
                 contexts
         );
+    }
+
+    @GetMapping("/rag-memory")
+    public String ragMemory(
+            @RequestParam String chatId,
+            @RequestParam String question
+    ) {
+
+        List<Float> embedding =
+                embeddingService.createEmbedding(question);
+
+        List<SearchResult> contexts =
+                qdrantService.search(embedding);
+
+        List<ChatMessage> history =
+                chatMemoryService.getHistory(chatId);
+
+        String response =
+                geminiService.askWithMemory(
+                        question,
+                        contexts,
+                        history
+                );
+
+        chatMemoryService.saveMessage(
+                chatId,
+                new ChatMessage(
+                        "user",
+                        question
+                )
+        );
+
+        chatMemoryService.saveMessage(
+                chatId,
+                new ChatMessage(
+                        "assistant",
+                        response
+                )
+        );
+
+        return response;
     }
 
 
