@@ -7,8 +7,10 @@ import com.suraj.rag.model.SearchResult;
 import com.suraj.rag.qdrant.QdrantService;
 import com.suraj.rag.service.PdfService;
 import com.suraj.rag.service.TextChunkingService;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -94,6 +96,23 @@ public class AiController {
                 qdrantService.search(embedding);
 
         return geminiService.askWithContext(
+                question,
+                contexts
+        );
+    }
+
+    @GetMapping(value = "/rag-stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> ragStream(
+            @RequestParam String question
+    ) {
+
+        List<Float> embedding =
+                embeddingService.createEmbedding(question);
+
+        List<SearchResult> contexts =
+                qdrantService.search(embedding);
+
+        return geminiService.askWithContextStream(
                 question,
                 contexts
         );
