@@ -56,7 +56,7 @@ Supports:
 * Conversational interface
 * Modern responsive dark theme
 
-# 🏗️ System Architecture
+# System Architecture
 
 ```mermaid
 graph TD
@@ -84,7 +84,7 @@ graph TD
     RETRIEVAL --> API
 ```
 #  End-to-End RAG Flow
-
+```text
 User Question
       ↓
 Generate Embedding
@@ -99,7 +99,11 @@ Gemini Generates Grounded Answer
       ↓
 Streaming Response to Frontend
 
-# Project Structure
+```
+
+# 📂 Project Structure
+
+```text
 rag-service/
 │
 ├── backend/
@@ -117,6 +121,7 @@ rag-service/
 │   └── api/
 │
 └── docker/
+```
 
 # Backend Tech Stack
 
