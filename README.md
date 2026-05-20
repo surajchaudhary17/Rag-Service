@@ -266,7 +266,6 @@ README/images/qdrant-payloads.png
 * User Authentication
 * Kubernetes Deployment
 * AI Agents / Tool Calling
-* Docker Compose Deployment
 * Observability & Monitoring
 
 # Key Engineering Concepts Demonstrated
@@ -281,6 +280,7 @@ README/images/qdrant-payloads.png
 * Enterprise RAG Design
 * Vector Database Integration
 * Multimodal AI Foundations
+* Docker Compose Deployment
 
 # Why This Project Stands Out
 This project demonstrates:
@@ -299,6 +299,7 @@ Unlike tutorial-only projects, this system includes:
 * PDF ingestion
 * frontend integration
 * real AI infrastructure
+* Docker Compose Deployment
 
 # Rag-Service
 SharePoint-based RAG + LLM platform
