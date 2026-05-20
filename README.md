@@ -1,3 +1,4 @@
+<img width="955" height="418" alt="ChatUi" src="https://github.com/user-attachments/assets/5db65ea6-f454-4846-8998-d39b0d8f37ca" />
 
 ![Java](https://img.shields.io/badge/Java-21-red)
 ![Spring Boot](https://img.shields.io/badge/SpringBoot-3.3-green)
@@ -223,7 +224,8 @@ GET /api/ai/rag-memory?chatId=123&question=...
 > Add screenshot here
 
 ```text
-README/images/chat-ui.png
+<img width="955" height="418" alt="ChatUi" src="https://github.com/user-attachments/assets/1b7fafaa-7cdc-4964-914f-2610862c7072" />
+
 ```
 
 ---
