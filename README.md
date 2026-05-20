@@ -246,12 +246,7 @@ README/images/pdf-upload.png
 ---
 
 ## 🔹 Qdrant Vector Payloads
-
-> Add screenshot here
-
-```text
-README/images/qdrant-payloads.png
-```
+<img width="928" height="422" alt="qdrant_vector_embeddings" src="https://github.com/user-attachments/assets/8e9d2089-1409-4895-8ef1-1735a780f464" />
 
 ---
 
