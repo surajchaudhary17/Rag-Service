@@ -123,49 +123,39 @@ public class GeminiService {
             String question,
             List<SearchResult> contexts
     ) {
-
         return Flux.create(sink -> {
-
             try {
-
-                String contextText =
-                        contexts.stream()
-                                .map(SearchResult::getText)
-                                .reduce("", String::concat);
+                String contextText = contexts.stream()
+                        .map(SearchResult::getText)
+                        .reduce("", String::concat);
 
                 String finalPrompt = """
-                    Answer ONLY from provided context.
+                Answer ONLY from provided context.
 
-                    CONTEXT:
-                    %s
+                CONTEXT:
+                %s
 
-                    QUESTION:
-                    %s
-                    """.formatted(
-                        contextText,
-                        question
+                QUESTION:
+                %s
+                """.formatted(contextText, question);
+
+                GenerateContentResponse response = client.models.generateContent(
+                        "gemini-2.5-flash",
+                        finalPrompt,
+                        null
                 );
 
-                GenerateContentResponse response =
-                        client.models.generateContent(
-                                "gemini-2.5-flash",
-                                finalPrompt,
-                                null
-                        );
-
                 String text = response.text();
+                String[] words = text.split(" ");
 
-                for (String token : text.split(" ")) {
-
-                    sink.next(token + " ");
-
-                    Thread.sleep(50);
+                for (String word : words) {
+                    sink.next(word);        // ← No trailing space; frontend adds it
+                    Thread.sleep(15);
                 }
 
                 sink.complete();
 
             } catch (Exception e) {
-
                 sink.error(e);
             }
         });

@@ -14,7 +14,7 @@ public class QdrantConfig {
 
         QdrantGrpcClient grpcClient =
                 QdrantGrpcClient.newBuilder(
-                        "localhost",
+                        "qdrant",
                         6334,
                         false
                 ).build();
