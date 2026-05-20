@@ -56,34 +56,33 @@ Supports:
 * Conversational interface
 * Modern responsive dark theme
 
-# System Architecture
+# 🏗️ System Architecture
 
-                    ┌──────────────────────┐
-                    │     React Frontend   │
-                    │  ChatGPT-style UI    │
-                    └──────────┬───────────┘
-                               │
-                               ▼
-                    ┌──────────────────────┐
-                    │   Spring Boot API    │
-                    │   REST + Streaming   │
-                    └──────────┬───────────┘
-                               │
-             ┌─────────────────┼─────────────────┐
-             ▼                 ▼                 ▼
-   ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-   │ Gemini AI APIs │ │ Qdrant Vector  │ │ Redis Memory   │
-   │ Text + Embeds  │ │ Database       │ │ Chat Sessions  │
-   └────────────────┘ └────────────────┘ └────────────────┘
-                               │
-                               ▼
-                    ┌──────────────────────┐
-                    │  Retrieval Pipeline  │
-                    │ Semantic Search      │
-                    └──────────────────────┘
+```mermaid
+graph TD
 
+    UI[React Frontend<br/>ChatGPT-style UI]
 
+    API[Spring Boot API<br/>REST + Streaming]
 
+    GEMINI[Gemini AI APIs<br/>Text + Embeddings]
+
+    QDRANT[Qdrant Vector Database]
+
+    REDIS[Redis Memory<br/>Chat Sessions]
+
+    RETRIEVAL[Retrieval Pipeline<br/>Semantic Search]
+
+    UI --> API
+
+    API --> GEMINI
+    API --> QDRANT
+    API --> REDIS
+
+    QDRANT --> RETRIEVAL
+
+    RETRIEVAL --> API
+```
 #  End-to-End RAG Flow
 
 User Question
