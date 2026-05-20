@@ -1,4 +1,11 @@
 
+![Java](https://img.shields.io/badge/Java-21-red)
+![Spring Boot](https://img.shields.io/badge/SpringBoot-3.3-green)
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![Qdrant](https://img.shields.io/badge/Qdrant-VectorDB-orange)
+![Redis](https://img.shields.io/badge/Redis-Memory-red)
+![Gemini](https://img.shields.io/badge/Gemini-AI-purple)
+
 # Enterprise RAG AI Assistant
 
 Production-Grade Retrieval-Augmented Generation (RAG) Platform built using Spring Boot, Gemini AI, Qdrant, Redis, Docker, and React.
