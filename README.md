@@ -101,7 +101,7 @@ Streaming Response to Frontend
 
 ```
 
-# 📂 Project Structure
+# Project Structure
 
 ```text
 rag-service/
@@ -146,7 +146,7 @@ rag-service/
 | Tailwind CSS | Modern Styling      |
 | Axios        | API Communication   |
 
-# 📄 Supported Document Types
+# Supported Document Types
   TXT, PDF, Images, OCR, DOCX
 
 # Core Components
@@ -209,7 +209,7 @@ GET /api/ai/rag-stream?question=...
 ## Conversational Memory Query
 GET /api/ai/rag-memory?chatId=123&question=...
 
-# 📸 Demo Screenshots
+# Demo Screenshots
 
 ## Chat UI
 
